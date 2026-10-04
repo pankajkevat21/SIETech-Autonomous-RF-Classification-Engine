@@ -1,0 +1,1 @@
+Double-click START_RF_SHAZAM_UI.bat

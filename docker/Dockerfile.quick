@@ -1,0 +1,10 @@
+FROM rf-shazam-track1:dependency-base
+
+WORKDIR /app
+
+RUN python -m pip uninstall -y opencv-python opencv-contrib-python || true
+RUN python -m pip install --no-cache-dir opencv-python-headless==4.10.0.84 pandas==3.0.3
+
+COPY . /app
+
+CMD ["python", "run_rf_shazam.py", "--input", "/input", "--output", "/output", "--config", "config/final_policy.json"]

@@ -1,0 +1,24 @@
+FROM rf-shazam-track1:dependency-base
+
+RUN python -m pip uninstall -y opencv-python opencv-contrib-python || true
+
+RUN python -m pip install \
+    --no-cache-dir \
+    --retries 10 \
+    --timeout 120 \
+    pandas
+
+RUN python -m pip install \
+    --no-cache-dir \
+    --no-deps \
+    --retries 10 \
+    --timeout 120 \
+    opencv-python-headless==4.10.0.84
+
+RUN python -c "import cv2, pandas, numpy, torch, ultralytics; \
+print('ALL_RUNTIME_IMPORTS_PASS'); \
+print('cv2', cv2.__version__); \
+print('pandas', pandas.__version__); \
+print('numpy', numpy.__version__); \
+print('torch', torch.__version__); \
+print('ultralytics', ultralytics.__version__)"

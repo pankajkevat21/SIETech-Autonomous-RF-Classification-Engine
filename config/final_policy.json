@@ -1,0 +1,27 @@
+{
+  "schema_version": "rf_shazam_cli_config_v1.0",
+  "created_at": "2026-07-09T18:30:51.067179",
+  "project": "RF Track-1 Spectrum Intelligence RF Shazam",
+  "safety_scope": "Passive RF/ESM analysis only; no transmission, jamming, or illegal interception.",
+  "model": {
+    "type": "YOLO-only detector/classifier",
+    "weights_path": "models/best.pt",
+    "confidence_threshold": 0.6,
+    "nms_iou": 0.5,
+    "imgsz": 640,
+    "max_det": 300,
+    "weights_path_note": "Relative to package root. Runner resolves this path automatically."
+  },
+  "classes": {
+    "0": "Drone_Signal",
+    "1": "WiFi",
+    "2": "Bluetooth"
+  },
+  "output_files": {
+    "event_log": "event_log.json",
+    "signature_library": "signature_library.json",
+    "events_csv": "events.csv",
+    "input_manifest": "processed_input_manifest.csv",
+    "run_summary": "run_summary.json"
+  }
+}

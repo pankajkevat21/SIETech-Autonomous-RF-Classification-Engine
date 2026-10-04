@@ -1,0 +1,25 @@
+{
+  "product_name": "RF Shazam Track-1 Spectrum Intelligence",
+  "release_version": "1.0.0",
+  "build_date_utc": "2026-07-16T18:52:19.860774+00:00",
+  "production_model_sha256": "B47AB2A7B0131A3FE8CDC650F7D1418D1C2E5974A30DEC42B2835F062E14072A",
+  "runner_sha256": "ED3183909CF56CC066EB95C2AD7D0FF031B30191CDE9C59EB58355D908ACE1F9",
+  "production_policy_sha256": "E9C9C60F8A670C661A4C4BB76702848A44ACCEAA6D5BB94A86E6B785BAD7F36A",
+  "docker_image_name": "rf-shazam-track1",
+  "docker_image_tag": "1.0.0",
+  "docker_image_id": "PENDING_BUILD",
+  "supported_inputs": [
+    "PNG",
+    "JPG/JPEG",
+    "NPY",
+    "NPZ"
+  ],
+  "known_classes": [
+    "Drone_Signal",
+    "WiFi",
+    "Bluetooth"
+  ],
+  "no_detection_label": "Background_No_Event",
+  "offline_required": true,
+  "release_status": "BLOCKED_NOT_READY"
+}

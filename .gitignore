@@ -1,0 +1,56 @@
+__pycache__/
+*.py[cod]
+venv/
+env/
+.venv/
+.pytest_cache/
+output/
+runtime/
+out/
+evidence/
+*.zip
+*.tar
+*.tar.gz
+*.log
+*.sqlite
+*.sqlite3
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+venv/
+env/
+.venv/
+
+# Test / cache
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Generated outputs
+output/
+runtime/
+out/
+evidence/
+*.zip
+*.tar
+*.tar.gz
+*.log
+
+# Database
+*.sqlite
+*.sqlite3
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp

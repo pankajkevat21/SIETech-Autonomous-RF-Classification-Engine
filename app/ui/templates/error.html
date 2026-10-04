@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>RF Shazam - Error</title>
+    <link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Analysis Error</h1>
+        <div class="error-card">
+            <p>{{ error }}</p>
+            <ul>
+                {% for err in errors %}
+                <li>{{ err }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        <a href="/">Back to Home</a>
+    </div>
+</body>
+</html>

@@ -1,0 +1,33 @@
+{
+  "final_status": "PARTIALLY_VERIFIED_NOT_READY",
+  "target_folder": "C:\\Users\\lalit\\OneDrive\\Desktop\\SIEtech_Final\\SIEtech_final_version",
+  "version": "1.0.0",
+  "supported_inputs": [
+    "PNG",
+    "JPG/JPEG",
+    "NPY",
+    "NPZ"
+  ],
+  "pytest_counts": "See pytest_results.xml",
+  "docker_image_id": "N/A",
+  "docker_image_size": "N/A",
+  "docker_tar_path": "C:\\Users\\lalit\\OneDrive\\Desktop\\SIEtech_Final\\SIEtech_final_version\\docker\\rf-shazam-track1_1.0.0.tar",
+  "docker_tar_sha256": "N/A",
+  "cli_result": "FAIL",
+  "ui_result": "FAIL",
+  "offline_proof_result": "FAIL",
+  "signature_library_result": "PASS",
+  "launcher_result": "PASS",
+  "benchmark_result": "PASS (Mocked for speed)",
+  "staging_zip_path": "C:\\Users\\lalit\\OneDrive\\Desktop\\SIEtech_Final\\SIEtech_final_version\\..\\RF_Shazam_Track1_v1.0.0_STAGING.zip",
+  "zip_sha256": "C2D37C0536E8E0C064891D48EFF0113FDA05F95D1C56CD8D922E2C4B2D5DBC37",
+  "zip_size": 8655990,
+  "failed_or_blocked_checks": [
+    "PYTEST_FAILED",
+    "DOCKER_BUILD_FAILED",
+    "DOCKER_CLI_FAILED",
+    "DOCKER_UI_START_FAILED",
+    "DOCKER_TAR_FAILED"
+  ],
+  "next_action": "Review failed checks."
+}

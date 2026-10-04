@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>RF Shazam - Analysis</title>
+    <link rel="stylesheet" href="/static/app.css">
+    <script>
+        function updateTopKState() {
+            const modeSelect = document.getElementById('library_mode');
+            const topKInput = document.getElementById('top_k');
+            if (modeSelect.value === 'off') {
+                topKInput.disabled = true;
+            } else {
+                topKInput.disabled = false;
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>RF Shazam - Offline Operator UI</h1>
+        <form action="/analyze" method="post" enctype="multipart/form-data" id="upload-form">
+            <div class="form-group">
+                <label>Upload RF Spectrogram Files</label>
+                <div style="font-size: 0.9em; color: #666; margin-bottom: 2px;">Supported signal formats: PNG, JPG/JPEG, NPY, NPZ</div>
+                <div style="font-size: 0.9em; color: #666; margin-bottom: 5px;">Optional metadata sidecar: JSON with the same filename stem</div>
+                <input type="file" name="files" multiple required>
+            </div>
+            
+            <div class="form-group">
+                <label>Library Mode</label>
+                <select name="library_mode" id="library_mode" onchange="updateTopKState()">
+                    <option value="read" selected>Read — Search existing signatures without saving new events</option>
+                    <option value="update">Update — Search existing signatures, then save new events</option>
+                    <option value="off">Off — Detection and classification only</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>Top-K Matches</label>
+                <input type="number" name="top_k" id="top_k" value="3" min="1" max="10">
+            </div>
+            
+            <button type="submit" id="submit-btn">Run Analysis</button>
+        </form>
+        <div id="loading" style="display:none;">
+            Processing inference... Please wait.
+        </div>
+    </div>
+    
+    <script src="/static/app.js"></script>
+    <script>
+        updateTopKState();
+    </script>
+</body>
+</html>

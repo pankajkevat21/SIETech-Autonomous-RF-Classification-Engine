@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>RF Shazam - Results</title>
+    <link rel="stylesheet" href="/static/app.css">
+    <style>
+        .badge { display: inline-block; padding: 4px 8px; border-radius: 4px; font-weight: bold; background: #eee; border: 1px solid #ccc; }
+        .badge-success { background: #d4edda; color: #155724; border-color: #c3e6cb; }
+        .badge-warning { background: #fff3cd; color: #856404; border-color: #ffeeba; }
+        .badge-danger { background: #f8d7da; color: #721c24; border-color: #f5c6cb; }
+        .card { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; border-radius: 4px; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Analysis Results</h1>
+        <div class="summary-card">
+            <h2>Run Summary</h2>
+            <div class="grid-2">
+                <div>
+                    <p><strong>Run ID:</strong> {{ data.summary.run_id }}</p>
+                    <p><strong>Timestamp (UTC):</strong> {{ data.summary.timestamp }}</p>
+                    <p><strong>Status:</strong> <span class="badge badge-success">{{ data.summary.run_status }}</span></p>
+                    <p><strong>Output Directory:</strong> {{ data.summary.output_directory }}</p>
+                    <p><strong>Processing Time:</strong> {{ "%.3f"|format(data.summary.runtime_sec) }} s</p>
+                </div>
+                <div>
+                    <p><strong>Library Mode:</strong> {{ data.summary.library_mode }}</p>
+                    <p><strong>Top-K Requested:</strong> {{ data.summary.top_k_requested }}</p>
+                    <p><strong>Inputs Submitted:</strong> {{ data.summary.total_inputs + data.summary.rejected_files }}</p>
+                    <p><strong>Processed Successfully:</strong> {{ data.summary.successfully_processed }}</p>
+                    <p><strong>Rejected Files:</strong> {{ data.summary.rejected_files }}</p>
+                    <p><strong>Total Accepted Events:</strong> {{ data.summary.total_events }}</p>
+                    <p><strong>Background / No Event Files:</strong> {{ data.summary.bne_count }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <h2>Detailed Results</h2>
+        {% for res in data.results %}
+            <div class="card" style="margin-top: 20px;">
+                <h3>File: {{ res.file_metadata.filename }}</h3>
+                <div class="grid-2">
+                    <div>
+                        <p><strong>Extension:</strong> {{ res.file_metadata.extension }}</p>
+                        <p><strong>Size:</strong> {{ res.file_metadata.file_size_bytes }} bytes</p>
+                        <p><strong>Dimensions:</strong> {{ res.file_metadata.dimensions }}</p>
+                        <p><strong>DType:</strong> {{ res.file_metadata.dtype }}</p>
+                    </div>
+                    <div>
+                        <p><strong>Metadata File:</strong> {{ res.metadata_source if res.metadata_source else 'None' }}</p>
+                        <p><strong>Metadata Status:</strong> 
+                            {% if res.metadata_status == 'Metadata loaded' %}
+                                <span class="badge badge-success">{{ res.metadata_status }}</span>
+                            {% elif res.metadata_status == 'Metadata not supplied' %}
+                                <span class="badge badge-warning">{{ res.metadata_status }}</span>
+                            {% else %}
+                                <span class="badge badge-danger">{{ res.metadata_status }}</span>
+                            {% endif %}
+                        </p>
+                        <p><strong>Processing Status:</strong> {{ res.processing_status }}</p>
+                        <p><strong>Accepted Detections:</strong> {{ res.events|length }}</p>
+                        {% if res.events %}
+                            <p><strong>Max Confidence:</strong> {{ "%.2f"|format(res.events | map(attribute='confidence') | max) }}</p>
+                        {% else %}
+                            <p><strong>Max Confidence:</strong> N/A</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                {% if res.overall_classification == 'Background_No_Event' or res.events|length == 0 %}
+                    <div style="margin-top: 15px; text-align: center;">
+                        <span class="badge badge-warning" style="font-size: 1.1em; padding: 10px;">Background Noise / No Known RF Event Detected</span>
+                    </div>
+                {% else %}
+                    <h4 style="margin-top: 20px;">Event Cards</h4>
+                    <div class="grid-2">
+                    {% for evt in res.events %}
+                        <div class="card">
+                            <h4>Event {{ loop.index }} ({{ evt.event_id }})</h4>
+                            <p><strong>Source File:</strong> {{ res.file_metadata.filename }}</p>
+                            <p><strong>Detected Class:</strong> {{ evt.class_name }}</p>
+                            <p><strong>Confidence:</strong> {{ "%.2f"|format(evt.confidence) }}</p>
+                            <p><strong>Bounding Box (xyxy):</strong> {{ evt.bounding_box }}</p>
+                            <p><strong>Dimensions (w x h):</strong> {{ (evt.bounding_box[2] - evt.bounding_box[0])|round|int }} x {{ (evt.bounding_box[3] - evt.bounding_box[1])|round|int }} px</p>
+                            <p><strong>Physical Mapping Status:</strong> {{ evt.physical_mapping_status }}</p>
+                            
+                            {% if evt.physical_mapping_status == 'Unavailable' %}
+                                <p style="font-style: italic; color: #666;">Physical time/frequency mapping unavailable</p>
+                            {% else %}
+                                {% if evt.time_start != None and evt.time_end != None %}
+                                    <p><strong>Time:</strong> {{ "%.6f"|format(evt.time_start) }}s - {{ "%.6f"|format(evt.time_end) }}s (Duration: {{ "%.6f"|format(evt.duration) }}s)</p>
+                                {% endif %}
+                                {% if evt.frequency_low != None and evt.frequency_high != None %}
+                                    <p><strong>Frequency:</strong> {{ "%.2f"|format(evt.frequency_low) }}Hz - {{ "%.2f"|format(evt.frequency_high) }}Hz</p>
+                                    <p><strong>Center Freq:</strong> {{ "%.2f"|format(evt.center_frequency) }}Hz (BW: {{ "%.2f"|format(evt.bandwidth) }}Hz)</p>
+                                {% endif %}
+                            {% endif %}
+                            
+                            {% if res.library_stats.library_mode != 'off' %}
+                            <h5 style="margin-bottom: 5px;">Library Matches</h5>
+                            {% if evt.retrieval_top3 %}
+                                <table>
+                                    <tr>
+                                        <th>Rank</th>
+                                        <th>Signature ID</th>
+                                        <th>Stored Class</th>
+                                        <th>Similarity</th>
+                                    </tr>
+                                    {% for match in evt.retrieval_top3 %}
+                                    <tr>
+                                        <td>{{ match.rank }}</td>
+                                        <td>{{ match.event_id }}</td>
+                                        <td>{{ match.class_name }}</td>
+                                        <td>{{ "%.4f"|format(match.similarity) }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </table>
+                            {% else %}
+                                <p style="font-style: italic; color: #666;">No matching signature found in the current library</p>
+                            {% endif %}
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                    </div>
+                {% endif %}
+
+                {% if res.library_stats %}
+                <h4 style="margin-top: 20px;">Library Update Status</h4>
+                <table>
+                    <tr>
+                        <th>Library Mode</th>
+                        <th>Database Path</th>
+                        <th>Records Before</th>
+                        <th>Records Searched</th>
+                        <th>Top-K Requested</th>
+                        <th>Matches Returned</th>
+                        <th>Records Inserted</th>
+                        <th>Duplicates Skipped</th>
+                        <th>Records After</th>
+                        <th>Database Modified</th>
+                    </tr>
+                    <tr>
+                        <td>{{ res.library_stats.library_mode|capitalize }}</td>
+                        <td>{{ res.library_stats.database_path }}</td>
+                        <td>{{ res.library_stats.records_before }}</td>
+                        <td>{{ res.library_stats.records_searched }}</td>
+                        <td>{{ res.library_stats.top_k_requested }}</td>
+                        <td>{{ res.library_stats.matches_returned }}</td>
+                        <td>{{ res.library_stats.records_inserted }}</td>
+                        <td>{{ res.library_stats.duplicates_skipped }}</td>
+                        <td>{{ res.library_stats.records_after }}</td>
+                        <td>{{ res.library_stats.database_modified }}</td>
+                    </tr>
+                </table>
+                {% endif %}
+            </div>
+        {% endfor %}
+        
+        <div style="margin-top: 30px;">
+            <h2>Downloads</h2>
+            <a href="/download/{{ data.summary.run_id }}/final_output.json" class="btn">events.json</a>
+            <a href="/download/{{ data.summary.run_id }}/run_summary.json" class="btn">summary.json</a>
+            <a href="/download/{{ data.summary.run_id }}/results_{{ data.req_id }}.zip" class="btn">Combined Result ZIP</a>
+        </div>
+        
+        <br><br>
+        <a href="/">Back to Home</a>
+    </div>
+</body>
+</html>
