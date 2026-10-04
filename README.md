@@ -53,8 +53,8 @@ Detects and classifies **Drone, WiFi, and Bluetooth** signals from spectrogram i
 ## Quick Start
 
 ```bash
-git clone https://github.com/<your-username>/SIETech.git
-cd SIETech
+git clone https://github.com/pankajkevat21/SIETech-Autonomous-RF-Classification-Engine.git
+cd SIETech-Autonomous-RF-Classification-Engine
 
 python3 -m venv venv
 source venv/bin/activate
